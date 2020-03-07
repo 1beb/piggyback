@@ -8,12 +8,13 @@ pb_upload(
   file,
   repo = guess_repo(),
   tag = "latest",
-  name = NULL,
+  name = names(file),
   overwrite = "use_timestamps",
   use_timestamps = NULL,
   show_progress = TRUE,
   .token = get_token(),
-  dir = "."
+  dir = ".",
+  include_path = FALSE
 )
 }
 \arguments{
@@ -43,6 +44,8 @@ environmental variable, e.g. in a \code{.Renviron} file or with
 disclosure of a secret token when sharing scripts.}
 
 \item{dir}{directory relative to which file names should be based.}
+
+\item{include_path}{logical, if \code{FALSE}, use only file base name and not path.}
 }
 \description{
 NOTE: you must first create a release if one does not already exists.

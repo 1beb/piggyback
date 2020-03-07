@@ -19,6 +19,7 @@
 #'  `Sys.setenv(GITHUB_TOKEN = "xxxxx")`, which helps prevent accidental
 #'   disclosure of a secret token when sharing scripts.
 #' @param dir directory relative to which file names should be based.
+#' @param include_path logical, if `FALSE`, use only file base name and not path.
 #' @examples
 #' \dontrun{
 #' # Needs your real token to run
@@ -32,25 +33,27 @@
 pb_upload <- function(file,
                       repo = guess_repo(),
                       tag = "latest",
-                      name = NULL,
+                      name = names(file),
                       overwrite = "use_timestamps",
                       use_timestamps = NULL,
                       show_progress = TRUE,
                       .token = get_token(),
-                      dir = ".") {
-  out <- lapply(file, function(f)
+                      dir = ".",
+                      include_path = FALSE) {
+  for(i in seq_along(file)){
     pb_upload_file(
-      f,
+      file[[i]],
       repo,
       tag,
-      name,
+      name[[i]],
       overwrite,
       use_timestamps,
       show_progress,
       .token,
-      dir
-    ))
-  invisible(out)
+      dir,
+      include_path
+    )
+  }
 }
 
 pb_upload_file <- function(file,
@@ -61,7 +64,8 @@ pb_upload_file <- function(file,
                            use_timestamps = NULL,
                            show_progress = TRUE,
                            .token = get_token(),
-                           dir = ".") {
+                           dir = ".",
+                           include_path = FALSE) {
   if (!file.exists(file)) {
     warning("file ", file, " does not exist")
     return(NULL)
@@ -92,9 +96,13 @@ pb_upload_file <- function(file,
     progress <- NULL
   }
 
-  if (is.null(name)) {
+  if (is.null(name)){
+    if(include_path) {
     ## name is name on GitHub, technically need not be name of local file
     name <- fs::path_rel(file, start = dir)
+    } else { # avoid paths in names so no name-mangling
+      name <- fs::path_file(file)
+    }
   }
 
   df <- pb_info(repo, tag, .token)
