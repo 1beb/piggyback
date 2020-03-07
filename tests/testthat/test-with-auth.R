@@ -15,7 +15,8 @@ test_that("We can upload data", {
     file = "iris.tsv.gz",
     tag = "v0.0.1",
     overwrite = TRUE,
-    show_progress = FALSE
+    show_progress = FALSE,
+    include_path = TRUE
   )
   expect_is(out, "list")
 
@@ -62,7 +63,7 @@ test_that("working from git repo", {
   library(magrittr)
   pb_track() %>%
     pb_upload(repo = "cboettig/piggyback-tests", tag = "v0.0.1",
-              show_progress = FALSE, overwrite = TRUE)
+              show_progress = FALSE, overwrite = TRUE, include_path = TRUE)
 
   # pb_pull
   pb_download(repo = "cboettig/piggyback-tests", tag = "v0.0.1",
@@ -133,7 +134,8 @@ testthat::test_that(
         repo = "cboettig/piggyback-tests",
         tag = "v0.0.1",
         show_progress = FALSE,
-        dir = tmp
+        dir = tmp,
+        include_path = TRUE
       )
     )
 
